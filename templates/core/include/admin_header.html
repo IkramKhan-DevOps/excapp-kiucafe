@@ -1,0 +1,26 @@
+{% load static %}
+
+
+{#DASHBOARD#}
+<li class="nav-item">
+    <a class="nav-link dropdown-toggle arrow-none" href="{% url 'admins:dashboard' %}">
+        <i class="bx bx-home-circle mr-2"></i>Admin Dashboard
+    </a>
+</li>
+
+{% if request.user.is_superuser %}
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/">
+            <i class="bx bx-sitemap mr-2"></i>Root Access
+        </a>
+    </li>
+{% endif %}
+
+<li class="nav-item">
+    <a class="nav-link" href="/">
+        <i class="bx bx-globe mr-2"></i>Website
+    </a>
+</li>
+
+
+{# ------------------------------------------------------------------------------------------------------------------ #}

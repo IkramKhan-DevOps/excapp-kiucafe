@@ -1,0 +1,27 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block base_content %}
+<!-- hero section start -->
+<section class="section hero-section bg-ico-hero " id="home">
+    <div class="bg-overlay bg-primary"></div>
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <div class="col-12 py-5 ">
+                <div class="text-white-50 text-center">
+                    <h1 class="text-white font-weight-semibold mb-3 hero-title">
+                        KIU - Cafe Management system
+                    </h1>
+                    <a class="btn btn-lg btn-primary" href="{% url 'account_login' %}">Seller Login</a>
+                    <a class="btn btn-lg btn-danger" href="/admin/">Manager Login</a>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</section>
+
+
+
+{% endblock %}

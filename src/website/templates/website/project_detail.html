@@ -1,0 +1,59 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block base_content %}
+    <!-- hero section start -->
+    <section class="section hero-section bg-ico-hero" id="home">
+        <div class="bg-overlay bg-primary"></div>
+        <div class="container">
+            <div class="row align-items-center text-center">
+                <div class="col-lg-12">
+                    <div class="text-white-50">
+                        <p class="my-2">({{ object.project_type }})</p>
+                        <h1 class="text-white font-weight-semibold mb-1 hero-title">
+                            {{ object.name }} <i class="fa fa-check-circle text-success"></i>
+                        </h1>
+                        <div class="row justify-content-center">
+
+                            <div class="cols m-2">
+                                <div class="p-3 border rounded">
+                                    <p class="mb-0">Required Fund</p>
+                                    <h1 class="text-white">{{ object.required_amount }}</h1>
+                                </div>
+                            </div>
+
+                            <div class="cols m-2">
+                                <div class="p-3 border rounded">
+                                    <p class="mb-0">Gained Fund</p>
+                                    <h1 class="text-white">{{ object.donation_amount }}</h1>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <div>
+                            <b>
+                                <a href="{% url 'customer-portal:donate' object.pk %}" class="btn btn-danger btn-lg">
+                                    <i class="fa fa-coins"></i> Donate Now
+                                </a>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </section>
+
+    <section class="section">
+        <div class="container">
+
+            <div class="col-lg-12">
+                <p class="mb-4">{{ object.description }}</p>
+                <b><i class="fa fa-pen"></i> Created On | {{ object.created_on }}</b>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
