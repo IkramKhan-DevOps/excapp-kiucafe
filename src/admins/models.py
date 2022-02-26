@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django_resized import ResizedImageField
 
 
@@ -20,6 +21,18 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ('-pk',)
+
+    def __unicode__(self):
+        return u'%s' % self.pk
+
+    def get_absolute_url(self):
+        return reverse('admins_product_detail', args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse('admins_product_update', args=(self.pk,))
+
 
 class Order(models.Model):
     customer_name = models.CharField(max_length=255, default='Anonymous', blank=True)
@@ -34,6 +47,18 @@ class Order(models.Model):
     def __str__(self):
         return self.customer_name
 
+    class Meta:
+        ordering = ('-pk',)
+
+    def __unicode__(self):
+        return u'%s' % self.pk
+
+    def get_absolute_url(self):
+        return reverse('admins_order_detail', args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse('admins_order_update', args=(self.pk,))
+
 
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,  related_name='orders')
@@ -42,3 +67,15 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.product.name
+
+    class Meta:
+        ordering = ('-pk',)
+
+    def __unicode__(self):
+        return u'%s' % self.pk
+
+    def get_absolute_url(self):
+        return reverse('admins_cart_detail', args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse('admins_cart_update', args=(self.pk,))

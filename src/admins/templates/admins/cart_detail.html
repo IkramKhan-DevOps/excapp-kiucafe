@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<p><a class="btn btn-default" href="{% url 'admins_cart_list' %}">Cart Listing</a></p>
+<table class="table">
+<tr><td>quantity</td><td>{{ object.quantity }}</td></tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit Cart</a>
+
+{% endblock %}

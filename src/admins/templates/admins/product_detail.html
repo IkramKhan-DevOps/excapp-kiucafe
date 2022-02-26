@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<p><a class="btn btn-default" href="{% url 'admins_product_list' %}">Product Listing</a></p>
+<table class="table">
+<tr><td>name</td><td>{{ object.name }}</td></tr>
+<tr><td>desc</td><td>{{ object.desc }}</td></tr>
+<tr><td>image</td><td>{{ object.image }}</td></tr>
+<tr><td>price_out</td><td>{{ object.price_out }}</td></tr>
+<tr><td>total_quantity_sold</td><td>{{ object.total_quantity_sold }}</td></tr>
+<tr><td>total_sales_amount</td><td>{{ object.total_sales_amount }}</td></tr>
+<tr><td>is_active</td><td>{{ object.is_active }}</td></tr>
+<tr><td>created_on</td><td>{{ object.created_on }}</td></tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit Product</a>
+
+{% endblock %}

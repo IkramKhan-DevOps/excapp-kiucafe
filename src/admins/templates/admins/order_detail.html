@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<p><a class="btn btn-default" href="{% url 'admins_order_list' %}">Order Listing</a></p>
+<table class="table">
+<tr><td>customer_name</td><td>{{ object.customer_name }}</td></tr>
+<tr><td>total</td><td>{{ object.total }}</td></tr>
+<tr><td>paid</td><td>{{ object.paid }}</td></tr>
+<tr><td>remaining</td><td>{{ object.remaining }}</td></tr>
+<tr><td>is_active</td><td>{{ object.is_active }}</td></tr>
+<tr><td>created_on</td><td>{{ object.created_on }}</td></tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit Order</a>
+
+{% endblock %}

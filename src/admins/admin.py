@@ -1,19 +1,47 @@
 from django.contrib import admin
-from .models import Product, Cart, Order
+from django import forms
+from .models import Product, Order, Cart
+
+class ProductAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Product
+        fields = '__all__'
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'name', 'price_in', 'price_out', 'created_on']
+    form = ProductAdminForm
+    list_display = ['name', 'desc', 'image', 'price_out', 'total_quantity_sold', 'total_sales_amount', 'is_active', 'created_on']
+    readonly_fields = ['name', 'desc', 'image', 'price_out', 'total_quantity_sold', 'total_sales_amount', 'is_active', 'created_on']
+
+admin.site.register(Product, ProductAdmin)
+
+
+class OrderAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Order
+        fields = '__all__'
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'customer_name', 'cart', 'total', 'paid', 'remaining', 'is_active', 'created_on']
+    form = OrderAdminForm
+    list_display = ['customer_name', 'total', 'paid', 'remaining', 'is_active', 'created_on']
+    readonly_fields = ['customer_name', 'total', 'paid', 'remaining', 'is_active', 'created_on']
+
+admin.site.register(Order, OrderAdmin)
+
+
+class CartAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Cart
+        fields = '__all__'
 
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'product', 'order', 'quantity']
+    form = CartAdminForm
+    list_display = ['quantity']
+    readonly_fields = ['quantity']
 
-
-admin.site.register(Product)
-admin.site.register(Cart)
-admin.site.register(Order)
+admin.site.register(Cart, CartAdmin)
