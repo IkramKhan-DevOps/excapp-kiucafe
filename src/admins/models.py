@@ -7,13 +7,13 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     desc = models.TextField(null=True, blank=True, default='Description not provided yet')
     image = ResizedImageField(
-        upload_to='accounts/images/profiles/', null=True, blank=True, size=[400, 400], quality=75, force_format='PNG',
+        upload_to='accounts/images/profiles/', null=True, blank=True, size=[350, 350], quality=75, force_format='PNG',
         help_text='size of logo must be 400*400 and format must be png image file', crop=['middle', 'center']
     )
     price_in = models.FloatField(default=1, help_text="Retail price")
     price_out = models.FloatField(default=1, help_text="Sale Price")
-    total_quantity_sold = models.PositiveIntegerField()
-    total_sales_amount = models.PositiveIntegerField()
+    total_quantity_sold = models.PositiveIntegerField(default=0, blank=True)
+    total_sales_amount = models.PositiveIntegerField(default=0, blank=True)
 
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)

@@ -4,6 +4,7 @@ django-allauth
 python-dateutil
 
 markdown
+django-generic-json-views
 django-filter
 django-resized
 python-decouple

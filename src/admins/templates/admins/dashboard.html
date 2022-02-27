@@ -1,17 +1,91 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block base_title %} Transactions {% endblock %}
+{% block base_title %} {{ request.user }} {% endblock %}
 
+{% block base_links %}{% endblock %}
 
 {% block content %}
+
     <div class="row">
-        <div class="col-12">
+
+        <div class="col-xl-12">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="mr-3 align-self-center">
+                                    <i class="mdi mdi-calendar h2 text-success mb-0"></i>
+                                </div>
+                                <div class="media-body">
+                                    <p class="text-muted mb-2">Sales Today</p>
+                                    <h5 class="mb-0">
+                                        Rs {{ today_amount }} <span
+                                            class="font-size-14 text-muted">({{ today_sales }})</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="mr-3 align-self-center">
+                                    <i class="mdi mdi-calendar-check h2 text-danger mb-0"></i>
+                                </div>
+                                <div class="media-body">
+                                    <p class="text-muted mb-2">Sales in {{ month_name }}</p>
+                                    <h5 class="mb-0">
+                                        Rs {{ month_amount }} <span class="font-size-14 text-muted">
+                                        ({{ month_sales }})</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="mr-3 align-self-center">
+                                    <i class="mdi mdi-clipboard-list h2 text-primary mb-0"></i>
+                                </div>
+                                <div class="media-body">
+                                    <p class="text-muted mb-2">Sales Total</p>
+                                    <h5 class="mb-0">
+                                        Rs {{ total_amount }} <span
+                                            class="font-size-14 text-muted">({{ total_sales }})</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
 
             <div class="card">
                 <div class="card-body">
-                    {% if object_list %}
-                        <div class="table-responsive">
+                    <h4 class="card-title mb-3">{{ month_name }} Overview</h4>
+                    <div id="chart">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Recent Orders</h4>
+
+                    {% if orders_recent %}
+                        <div class="table-responsive mt-4">
                             <table class="table table-centered table-nowrap table-hover">
                                 <thead class="thead-light">
                                 <tr>
@@ -26,7 +100,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for object in object_list %}
+                                {% for object in orders_recent %}
                                     <tr>
                                         <td>
                                             <h5 class="text-truncate font-size-14">
@@ -87,6 +161,12 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <div>
+                            <p class="mb-0">
+                                <b><a href="{% url 'admins_order_list' %}"><i class="fa fa-link"></i> View All</a></b>
+                            </p>
+                        </div>
                     {% else %}
                         <p class="text-danger mb-0">
                             <b><i class="fa fa-exclamation-circle"></i> No Orders placed yet.</b>
@@ -94,39 +174,44 @@
                     {% endif %}
                 </div>
             </div>
-
         </div>
     </div>
 
-    {% if object_list %}
-        <div class="row">
-            <div class="col-lg-12">
-                <ul class="pagination pagination-rounded mt-4">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1"><<</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                <i class="mdi mdi-chevron-left"></i>
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="page-item active">
-                        <a class="page-link">{{ page_obj.number }}</a>
-                    </li>
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i
-                                    class="mdi mdi-chevron-right"></i></a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">>></a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    {% endif %}
+{% endblock %}
 
+{% block base_internal_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+{% endblock %}
+
+{% block base_external_scripts %}
+    <script>
+        var options = {
+            series: [{
+                name: 'Total Sales',
+                data: {{ chart_sales }}
+            }, {
+                name: 'Total Income',
+                data: {{ chart_income }}
+            }
+            ],
+            chart: {
+                height: 350,
+                type: 'area'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            xaxis: {
+                type: 'number',
+                categories: {{ days }}
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+    </script>
 {% endblock %}

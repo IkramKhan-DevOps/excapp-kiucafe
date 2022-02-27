@@ -137,11 +137,7 @@
                 <ul class="navbar-nav">
 
                     {% if request.user.is_authenticated %}
-                        {% if request.user.is_superuser %}
                             {% include 'core/include/admin_header.html' %}
-                        {% else %}
-                            {% include 'core/include/customer_header.html' %}
-                        {% endif %}
                     {% endif %}
 
                 </ul>

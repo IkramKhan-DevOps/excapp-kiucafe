@@ -3,7 +3,7 @@
 
 {#DASHBOARD#}
 <li class="nav-item">
-    <a class="nav-link dropdown-toggle arrow-none" href="{% url 'admins:dashboard' %}">
+    <a class="nav-link dropdown-toggle arrow-none" href="{% url 'admins_dashboard' %}">
         <i class="bx bx-home-circle mr-2"></i>Admin Dashboard
     </a>
 </li>
@@ -17,10 +17,28 @@
 {% endif %}
 
 <li class="nav-item">
-    <a class="nav-link" href="/">
-        <i class="bx bx-globe mr-2"></i>Website
+    <a class="nav-link" href="{% url 'admins_product_list' %}">
+        <i class="fa fa-pizza-slice mr-2"></i>Food
     </a>
 </li>
 
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'admins_order_list' %}">
+        <i class="fa fa-clipboard-list mr-2"></i>Orders
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'admins_order_create' %}">
+        <i class="fa fa-cash-register mr-2"></i>POS
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link text-danger" href="#">
+        <i class="fa fa-truck mr-2"></i>Inventory
+    </a>
+</li>
 
 {# ------------------------------------------------------------------------------------------------------------------ #}

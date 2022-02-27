@@ -43,9 +43,6 @@ class UserCustomAdmin(admin.ModelAdmin):
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': (
             'profile_image', 'first_name', 'last_name', 'email', 'phone_number', 'gender', 'address', 'about')}),
-        ('Statistics', {
-            'fields': ('donations_total', 'donations_amount', 'donations_projects'),
-        }),
         ('Access Level', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'is_customer'),
         }),

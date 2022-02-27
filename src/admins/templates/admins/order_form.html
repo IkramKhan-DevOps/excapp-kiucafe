@@ -1,11 +1,293 @@
-{% extends "base.html" %}
+{% extends 'core/base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
+
+{% block base_title %} Order {% endblock %}
+
+
 {% block content %}
-<p><a class="btn btn-default" href="{% url 'admins_order_list' %}">Order Listing</a></p>
-<form method="post">
-{% csrf_token %}
-{{form|crispy}}
-<button class="btn btn-primary" type="submit">Submit</button>
-</form>
+    <div class="row">
+        <div class="col-8">
+
+            <div class="card">
+                <div class="card-body border-bottom">
+                    <div class="form-group mb-0">
+                        <div class="input-group">
+                            <input type="search" id="pro-search" name="search" placeholder="Search Foods"
+                                   class="form-control">
+                            <span class="input-group-btn input-group-append">
+                                <button class="btn btn-primary" id="pro-search-btn" type="button">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="pros-div">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-4">
+            {# CART ----------------------------------- #}
+            <div class="card">
+                <div class="card-body border-bottom">
+                    <p class="card-title mb-0">Cart Details</p>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="cart-rows">
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {# CALC------------------------------------ #}
+            <div class="card">
+                <div class="card-body border-bottom">
+                    <h4 class="card-title mb-0">Order Summary</h4>
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive table-borderless">
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr>
+                                <td>Grand Total :</td>
+                                <td id="total">00</td>
+                            </tr>
+                            <tr>
+                                <td>Discount :</td>
+                                <td id="discount">00</td>
+                            </tr>
+                            <tr>
+                                <td>Estimated Tax :</td>
+                                <td id="tax">00</td>
+                            </tr>
+                            <tr>
+                                <th>Payable :</th>
+                                <th id="payable">00</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+
+            {# ACTIONS--------------------------------- #}
+            <div class="card">
+                <div class="card-body border-bottom">
+                    <h4 class="card-title mb-0">Finalization</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-check">
+
+                        <input type="radio" class="form-check-input" id="paymentway" name="paymentway" value="CC" disabled>
+                        Credit Card <br>
+                        <input type="radio" class="form-check-input" id="paymentway" name="paymentway" value="PL" disabled>
+                        Pay Later<br>
+                        <input type="radio" class="form-check-input" id="paymentway" name="paymentway" value="CA"
+                               checked> Cash
+
+                    </div>
+                    <p class="mt-2">Select best payment way according to order needs</p>
+                    <input placeholder="Customer Name" type="text" id="c-id" name="c-id" class="form-control">
+                    <hr>
+
+                    <div class="form-group">
+                        <button class="btn btn-success" id="process_order"><i class="fa fa-check"></i> Proceed</button>
+                        <button class="btn btn-danger" id="cancel_order"><i class="fa fa-trash"></i> Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block base_external_scripts %}
+    <script>
+        $(document).ready(function () {
+
+            {# VARIABLES DECLERATION #}
+            {# --------------------- #}
+
+            let pro_search_btn = $('#pro-search-btn');
+            let pro_search = $('#pro-search');
+            let pros_div = $('#pros-div');
+            let pro_div = $('#pro-div');
+            let cart_rows = $('#cart-rows');
+
+            let total = $('#total');
+            let discount = $('#discount');
+            let tax = $('#tax');
+            let payable = $('#payable');
+
+            let cancel_order = $('#cancel_order');
+            let process_order = $('#process_order');
+
+            {# INIT #}
+            {# ---- #}
+            getFoodListAPI('');
+
+            {# EVENTS HANDLING #}
+            {# SEARCH #}
+            {# ------ #}
+
+            pro_search.keyup(function () {
+                let value = $(this).val();
+                getFoodListAPI(value)
+            });
+
+            {# ON ADD TO CART #}
+            {# -------------- #}
+            $('body').on('click', '#pros-div #pro-div', function () {
+                let product_id = $(this).data('id');
+                let product_name = $(this).data('name');
+                let product_price = $(this).data('price');
+
+                if (!is_product_exists_in_cart(product_id)) {
+                    let data_html = `<tr data-id="${product_id}" data-price="${product_price}">
+                                    <th>${product_name}</th>
+                                    <th><input class="form-control" data-id="${product_id}" type="number" value="1" id="quanity"></th>
+                                    <th id="price">Rs ${product_price}</th>
+                                </tr>
+                    `;
+                    cart_rows.append(data_html)
+                }
+
+                totalling();
+            });
+
+            {# ON CHANGE IN CART #}
+            {# ----------------- #}
+            $('#cart-rows').on('keyup', '#quanity', function () {
+                let _quantity = parseInt($(this).val());
+                if (_quantity<1){
+                    $(this).val('1');
+                }
+
+                // TODO: calculations
+                totalling();
+            });
+
+            {# ON CANCEL ORDER #}
+            {# ----------------- #}
+            cancel_order.click(function () {
+                location.reload();
+            });
+
+            {# FUNCTIONS API ---------------------------------------------------------------------------------------- #}
+
+            function getFoodListAPI(value) {
+                $('body #pros-div').html('');
+                $.get('/api/product/?name=' + value, function (data, status) {
+                    if (status === 'success') {
+                        let data_html = '';
+                        for (let i = 0; i < data.length; i++) {
+                            let product_image = "{% static 'core/images/no-image.jpg' %}";
+                            let name = data[i].name;
+
+                            if (data[i].name.length > 12) {
+                                name = data[i].name.substring(0, 12) + "..."
+                            }
+
+                            if (data[i].image !== null) {
+                                product_image = data[i].image
+                            }
+
+                            data_html += `
+                            <div class="cols p-2" id="pro-div" data-id="${data[i].id}" data-name="${data[i].name}" data-price="${data[i].price_out}">
+                                <img height="100" src="${product_image}">
+                                <div class=" mt-2">
+                                    <p class="mb-0 text-muted">${name}</p>
+                                    <p class="mb-0 card-title text-wrap">Rs ${data[i].price_out}</p>
+                                </div>
+                             </div>
+                            `;
+                        }
+                        $('body #pros-div').append(data_html);
+                    }
+                });
+            }
+
+            {# PROCESS ORDER #}
+            process_order.click(function (event) {
+                event.preventDefault();
+                let customer_name = $('#c-id').text();
+                if (customer_name.length < 1){
+                    customer_name = "Anonymous"
+                }
+
+                let order = {
+                    customer: customer_name,
+                    paymentmethod: $("input[name='paymentway']:checked").val(),
+                    total: total.text(),
+                    discount: discount.text(),
+                    tax: tax.text(),
+                    payable: payable.text(),
+                    products: []
+                };
+
+                $('#cart-rows > tr').each(function () {
+                    let _id = $(this).attr('id');
+                    let _quantity = parseInt($(this).find('input').val());
+                    order.products.push(
+                        {'id': _id, 'quantity': _quantity}
+                    );
+                });
+                order = JSON.stringify(order);
+                console.log(order)
+            });
+
+
+            {# FUNCTIONS PAGE --------------------------------------------------------------------------------------- #}
+
+
+            function is_product_exists_in_cart(id) {
+                let flag = false;
+                $('#cart-rows > tr').each(function () {
+                    if ($(this).data('id') === id) {
+                        let input_value = $(this).find('input');
+                        input_value.val(parseInt(input_value.val()) + 1);
+                        flag = true;
+                    }
+                });
+                return flag;
+            }
+
+            function totalling() {
+
+                let _total = 0;
+                let _payable = 0;
+
+                $('#cart-rows > tr').each(function () {
+
+                    let _id = $(this).data('id');
+                    let _price = parseFloat($(this).data('price'));
+                    let _quantity = parseInt($(this).find('input').val());
+
+                    _total += (_price*_quantity)
+
+                });
+
+                total.text(_total);
+                payable.text(_total);
+            }
+
+            {# FUNCTIONS HELPERS ------------------------------------------------------------------------------------ #}
+
+            function isNullOrEmpty(value) {
+                return value.length < 1;
+            }
+
+        });
+    </script>
 {% endblock %}

@@ -10,7 +10,10 @@ from src.accounts.forms import UserProfileForm
 class CrossAuthView(View):
 
     def get(self, request):
-        return redirect('/admin/')
+        if request.user.is_superuser:
+            return redirect('/admin/')
+        else:
+            return redirect('admins_dashboard')
 
 
 @method_decorator(login_required, name='dispatch')

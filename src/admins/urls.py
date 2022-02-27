@@ -2,6 +2,9 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = (
+
+    path('admins/', views.DashboardView.as_view(), name='admins_dashboard'),
+
     # urls for Product
     path('admins/product/', views.ProductListView.as_view(), name='admins_product_list'),
     path('admins/product/create/', views.ProductCreateView.as_view(), name='admins_product_create'),
@@ -23,4 +26,9 @@ urlpatterns += (
     path('admins/cart/create/', views.CartCreateView.as_view(), name='admins_cart_create'),
     path('admins/cart/detail/<int:pk>/', views.CartDetailView.as_view(), name='admins_cart_detail'),
     path('admins/cart/update/<int:pk>/', views.CartUpdateView.as_view(), name='admins_cart_update'),
+)
+
+urlpatterns += (
+    path('api/product/', views.ProductListAPI.as_view(), name='product_list'),
+    path('api/order/', views.ProcessOrderAPI.as_view(), name='process_order'),
 )
