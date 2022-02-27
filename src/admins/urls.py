@@ -31,4 +31,6 @@ urlpatterns += (
 urlpatterns += (
     path('api/product/', views.ProductListAPI.as_view(), name='product_list'),
     path('api/order/', views.ProcessOrderAPI.as_view(), name='process_order'),
+    path('api/order/<int:pk>/delete/', views.DeleteOrderAPI.as_view(), name='delete_order'),
+    path('api/return/<int:pk>/', views.ReturnAPI.as_view(), name='return_order'),
 )

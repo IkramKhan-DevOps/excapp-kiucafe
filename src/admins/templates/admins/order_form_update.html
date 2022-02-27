@@ -30,7 +30,9 @@
             </div>
 
         </div>
+
         {% csrf_token %}
+
         <div class="col-4">
             {# CART ----------------------------------- #}
             <div class="card">
@@ -40,6 +42,16 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered" id="cart-rows">
+                            {% for cart in carts %}
+                                <tr data-id="{{ cart.product.pk }}" data-price="{{ cart.product.price_out }}">
+                                    <th>{{ cart }}</th>
+                                    <th>
+                                        <input class="form-control" data-id="{{ cart.product.pk }}" type="number"
+                                               value="{{ cart.quantity }}"
+                                               id="quantity"></th>
+                                    <th id="price">{{ cart.product.price_out }}</th>
+                                </tr>
+                            {% endfor %}
 
                         </table>
                     </div>
@@ -58,7 +70,7 @@
                             <tbody>
                             <tr>
                                 <td>Grand Total :</td>
-                                <td id="total">00</td>
+                                <td id="total">{{ object.total }}</td>
                             </tr>
                             <tr>
                                 <td>Discount :</td>
@@ -70,7 +82,7 @@
                             </tr>
                             <tr>
                                 <th>Payable :</th>
-                                <th id="payable">00</th>
+                                <th id="payable">{{ object.paid }}</th>
                             </tr>
                             </tbody>
                         </table>
@@ -99,12 +111,14 @@
 
                     </div>
                     <p class="mt-2">Select best payment way according to order needs</p>
-                    <input placeholder="Customer Name" type="text" id="c-id" name="c-id" class="form-control">
+                    <input placeholder="Customer Name" value="{{ object.customer_name }}" type="text" id="c-id"
+                           name="c-id" class="form-control">
                     <hr>
 
                     <div class="form-group">
                         <button class="btn btn-success" id="process_order"><i class="fa fa-check"></i> Proceed</button>
-                        <button class="btn btn-danger" id="cancel_order"><i class="fa fa-trash"></i> Cancel</button>
+                        <button class="btn btn-warning" id="cancel_order"><i class="fa fa-times-circle"></i> Delete</button>
+                        <button class="btn btn-danger" id="delete_order"><i class="fa fa-trash"></i> Delete</button>
                     </div>
                 </div>
             </div>
@@ -144,6 +158,7 @@
 
             let cancel_order = $('#cancel_order');
             let process_order = $('#process_order');
+            let delete_order = $('#delete_order');
 
             {# INIT #}
             {# ---- #}
@@ -180,7 +195,7 @@
 
             {# ON CHANGE IN CART #}
             {# ----------------- #}
-            $('#cart-rows').on('keyup', '#quanity', function () {
+            $('body #cart-rows #quantity').keyup(function () {
                 let _quantity = parseInt($(this).val());
                 if (_quantity < 1) {
                     $(this).val('1');
@@ -191,10 +206,24 @@
                 totalling();
             });
 
+            $('#cart-rows').on('change', '#quantity', function () {
+                let _quantity = parseInt($(this).val());
+                if (_quantity < 1) {
+                    $(this).val('1');
+                }
+                totalling();
+            });
+
             {# ON CANCEL ORDER #}
             {# ----------------- #}
             cancel_order.click(function () {
                 location.reload();
+            });
+
+            {# ON CANCEL ORDER #}
+            {# ----------------- #}
+            delete_order.click(function () {
+                deleteOrderAPI();
             });
 
             {# FUNCTIONS API ---------------------------------------------------------------------------------------- #}
@@ -249,7 +278,7 @@
                     products: []
                 };
 
-                $('#cart-rows > tr').each(function () {
+                $('#cart-rows tr').each(function () {
                     let _id = $(this).data('id');
                     let _quantity = parseInt($(this).find('input').val());
                     order.products.push(
@@ -259,15 +288,15 @@
                 order = JSON.stringify(order);
 
                 $.ajax({
-                    url: '/api/order/',
+                    url: '/api/return/{{ object.pk }}/',
                     type: 'POST',
                     data: order,
                     contentType: 'application/json',
                     processData: false,
                 }).then(function (data, status) {
                     if (status === 'success') {
-                        alert('Order Placed Successfull');
-                        location.reload();
+                        alert('Order Changed');
+                        location.href = "/admins/order/update/"+data.id+"/";
                     }
                 }).catch(function (err) {
                     console.log(err);
@@ -280,7 +309,7 @@
 
             function is_product_exists_in_cart(id) {
                 let flag = false;
-                $('#cart-rows > tr').each(function () {
+                $('#cart-rows tr').each(function () {
                     if ($(this).data('id') === id) {
                         let input_value = $(this).find('input');
                         input_value.val(parseInt(input_value.val()) + 1);
@@ -295,7 +324,7 @@
                 let _total = 0;
                 let _payable = 0;
 
-                $('#cart-rows > tr').each(function () {
+                $('#cart-rows tr').each(function () {
 
                     let _id = $(this).data('id');
                     let _price = parseFloat($(this).data('price'));
@@ -307,6 +336,14 @@
 
                 total.text(_total);
                 payable.text(_total);
+            }
+
+            function deleteOrderAPI() {
+                $.get('/api/order/{{ object.pk }}/delete/', function (data, status) {
+                    if(status==='success'){
+                        window.location = "{% url 'admins_order_list' %}";
+                    }
+                })
             }
 
             {# FUNCTIONS HELPERS ------------------------------------------------------------------------------------ #}

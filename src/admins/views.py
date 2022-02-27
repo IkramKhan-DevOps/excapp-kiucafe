@@ -1,16 +1,18 @@
 import calendar
 import datetime
 import json
+from builtins import super
 from datetime import date
 
 from django.core import serializers
 from django.db.models import Sum, Count
 from django.http import JsonResponse, HttpResponse
 from django.views import View
-from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView
+from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView, DeleteView
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, filters
 from json_views.views import JSONListView
 from rest_framework import generics, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -118,6 +120,13 @@ class OrderDetailView(DetailView):
 class OrderUpdateView(UpdateView):
     model = Order
     form_class = OrderForm
+    template_name = 'admins/order_form_update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderUpdateView, self).get_context_data(**kwargs)
+        context['carts'] = Cart.objects.filter(order=self.object)
+        print(context['carts'])
+        return context
 
 
 class CartListView(ListView):
@@ -168,27 +177,94 @@ class ProcessOrderAPI(APIView):
 
     def post(self, request):
         data = self.request.data
-        print(data)
 
         customer = data['customer']
-        paymentmethod = data['paymentmethod']
         total = data['total']
-        discount = data['discount']
-        tax = data['tax']
-        payable = data['payable']
         products = data['products']
 
         order = Order.objects.create(
-            customer=customer, total=total, paid=total
+            customer_name=customer, total=total, paid=total, remaining=0
         )
 
         for product in products:
+            product_ = Product.objects.get(pk=product['id'])
+            quantity_ = product['quantity']
+
+            # SAVE PRODUCT
+            product_.total_quantity_sold += quantity_
+            product_.total_sales_amount += (quantity_ * product_.price_out)
+            product_.save()
+
+            # SAVE CART
             Cart(
                 order=order,
-                product=Product.objects.get(pk=product['id']),
+                product=product_,
                 quantity=product['quantity']
             ).save()
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class DeleteOrderAPI(APIView):
+
+    def get(self, request, pk):
+        order = Order.objects.get(pk=pk)
+        for cart in Cart.objects.filter(order=order):
+            product_ = cart.product
+            quantity_ = cart.quantity
+
+            # SAVE PRODUCT
+            product_.total_quantity_sold -= quantity_
+            product_.total_sales_amount -= (quantity_ * product_.price_out)
+            product_.save()
+
+        order.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+class ReturnAPI(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+
+        data = self.request.data
+
+        customer = data['customer']
+        total = data['total']
+        products = data['products']
+        order = Order.objects.create(
+            customer_name=customer, total=total, paid=total, remaining=0
+        )
+
+        for product in products:
+            product_ = Product.objects.get(pk=product['id'])
+            quantity_ = product['quantity']
+
+            # SAVE PRODUCT
+            product_.total_quantity_sold += quantity_
+            product_.total_sales_amount += (quantity_*product_.price_out)
+            product_.save()
+
+            # SAVE CART
+            Cart.objects.create(
+                order=order,
+                product=product_,
+                quantity=product['quantity']
+            )
+
+        # DELETE PREVIOUS
+        _order = Order.objects.get(pk=pk)
+        for cart in Cart.objects.filter(order=_order):
+            product_ = cart.product
+            quantity_ = cart.quantity
+
+            # SAVE PRODUCT
+            product_.total_quantity_sold -= quantity_
+            product_.total_sales_amount -= (quantity_ * product_.price_out)
+            product_.save()
+
+        _order.delete()
+
+        return Response(status=status.HTTP_201_CREATED, data={'id': order.pk})
 
 

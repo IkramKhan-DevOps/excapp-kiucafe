@@ -13,7 +13,7 @@ class ProductAdminForm(forms.ModelForm):
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     list_display = ['name', 'desc', 'image', 'price_out', 'total_quantity_sold', 'total_sales_amount', 'is_active', 'created_on']
-    readonly_fields = ['total_quantity_sold', 'total_sales_amount', 'created_on']
+    readonly_fields = ['created_on']
 
 
 admin.site.register(Product, ProductAdmin)

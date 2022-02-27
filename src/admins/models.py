@@ -22,7 +22,7 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('-pk',)
+        ordering = ('-total_quantity_sold',)
 
     def __unicode__(self):
         return u'%s' % self.pk
