@@ -5,6 +5,7 @@ from builtins import super
 from datetime import date
 
 from django.core import serializers
+from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.http import JsonResponse, HttpResponse
 from django.views import View
@@ -18,6 +19,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
+from src.admins.filters import OrderFilter
 from .models import Product, Order, Cart
 from .forms import ProductForm, OrderForm, CartForm
 
@@ -106,6 +108,19 @@ class ProductUpdateView(UpdateView):
 
 class OrderListView(ListView):
     model = Order
+    paginate_by = 100
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderListView, self).get_context_data(**kwargs)
+        filter_ = OrderFilter(self.request.GET, queryset=Order.objects.filter())
+        context['filter_form'] = filter_.form
+
+        paginator = Paginator(filter_.qs, 50)
+        page_number = self.request.GET.get('page')
+        page_object = paginator.get_page(page_number)
+
+        context['object_list'] = page_object
+        return context
 
 
 class OrderCreateView(CreateView):
