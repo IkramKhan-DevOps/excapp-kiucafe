@@ -4,6 +4,7 @@ import json
 from builtins import super
 from datetime import date
 
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
@@ -26,12 +27,14 @@ from .models import Product, Order, Cart
 from .forms import ProductForm, OrderForm, CartForm
 
 
+
 def get_month_days():
     now = datetime.datetime.now()
     days = calendar.monthrange(now.year, now.month)[1]
     return days
 
 
+@method_decorator(login_required, name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'admins/dashboard.html'
 
@@ -89,25 +92,30 @@ class DashboardView(TemplateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductListView(ListView):
     model = Product
     paginate_by = 50
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductCreateView(CreateView):
     model = Product
     fields = ['image', 'name', 'desc', 'price_in', 'price_out', 'is_active']
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductUpdateView(UpdateView):
     model = Product
     fields = ['image', 'name', 'desc', 'price_in', 'price_out', 'is_active']
 
 
+@method_decorator(login_required, name='dispatch')
 class OrderListView(ListView):
     model = Order
     paginate_by = 100
@@ -131,6 +139,7 @@ class OrderCreateView(CreateView):
     form_class = OrderForm
 
 
+@method_decorator(login_required, name='dispatch')
 class OrderDetailView(DetailView):
     model = Order
 
@@ -148,19 +157,23 @@ class OrderUpdateView(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class CartListView(ListView):
     model = Cart
 
 
+@method_decorator(login_required, name='dispatch')
 class CartCreateView(CreateView):
     model = Cart
     form_class = CartForm
 
 
+@method_decorator(login_required, name='dispatch')
 class CartDetailView(DetailView):
     model = Cart
 
 
+@method_decorator(login_required, name='dispatch')
 class CartUpdateView(UpdateView):
     model = Cart
     form_class = CartForm
@@ -196,6 +209,7 @@ class ProductFilter(FilterSet):
         fields = ['name']
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductListAPI(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -204,6 +218,7 @@ class ProductListAPI(generics.ListAPIView):
     filter_class = ProductFilter
 
 
+@method_decorator(login_required, name='dispatch')
 class ProcessOrderAPI(APIView):
     permission_classes = [AllowAny]
 
@@ -237,6 +252,7 @@ class ProcessOrderAPI(APIView):
         return Response(status=status.HTTP_201_CREATED, data={'id':order.pk})
 
 
+@method_decorator(login_required, name='dispatch')
 class DeleteOrderAPI(APIView):
 
     def get(self, request, pk):
@@ -254,6 +270,7 @@ class DeleteOrderAPI(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+@method_decorator(login_required, name='dispatch')
 class ReturnAPI(APIView):
     permission_classes = [AllowAny]
 

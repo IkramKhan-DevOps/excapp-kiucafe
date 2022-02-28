@@ -2,6 +2,7 @@ django==3.2
 
 django-allauth
 python-dateutil
+djangorestframework
 
 markdown
 django-generic-json-views
