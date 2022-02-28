@@ -1,18 +1,73 @@
 {% load static %}
-<!-- Footer start -->
-<footer class="landing-footer">
+<section class="big-section">
     <div class="container">
-
-        <div class="row justify-content-center">
-
-            <div class="col-lg-6 text-center">
-                <p class="">2022 - {% now 'Y' %} © KIU-Cafe . Designed and Developed by Team
-                    <b class="text-danger"><i class="fa fa-sort-alpha-down"></i> Exarth</b>
-                </p>
+        <div class="row row-cols-1 row-cols-lg-4 row-cols-sm-2">
+            <!-- start feature box item -->
+            <div class="col text-center md-margin-40px-bottom last-paragraph-no-margin wow animate__fadeIn"
+                 data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeIn;">
+                <div class="text-extra-dark-gray text-uppercase text-medium font-weight-600 alt-font letter-spacing-1px margin-10px-bottom">
+                    Contact us
+                </div>
+                <p class="w-70 lg-w-100 md-w-60 sm-w-75 sm-margin-10px-bottom mx-auto">KIU Cafeteria, Karakorum International University GB</p>
             </div>
-
+            <!-- end feature box item -->
+            <!-- start feature box item -->
+            <div class="col text-center md-margin-40px-bottom last-paragraph-no-margin wow animate__fadeIn"
+                 data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeIn;">
+                <div class="text-extra-dark-gray text-uppercase text-medium font-weight-600 alt-font letter-spacing-1px margin-10px-bottom">
+                    Let's Talk
+                </div>
+                <p class="w-70 lg-w-100 sm-margin-10px-bottom mx-auto">Phone: +92 000 000 00<br>Fax: +92 000 000 00</p>
+            </div>
+            <!-- end feature box item -->
+            <!-- start feature box item -->
+            <div class="col text-center xs-margin-40px-bottom last-paragraph-no-margin wow animate__fadeIn"
+                 data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeIn;">
+                <div class="text-extra-dark-gray text-uppercase text-medium font-weight-600 alt-font letter-spacing-1px margin-10px-bottom">
+                    Tickets info
+                </div>
+                <p class="w-70 lg-w-100 sm-margin-10px-bottom mx-auto"><a href="mailto:help@kiu-cafe.com"
+                                                                          class="text-golden-hover">help@kiu-cafe.com</a><br><a
+                        href="mailto:support@kiu-cafe.com" class="text-golden-hover">support@kiu-cafe.com</a></p>
+            </div>
+            <!-- end feature box item -->
+            <!-- start feature box item -->
+            <div class="col text-center xs-margin-40px-bottom last-paragraph-no-margin wow animate__fadeIn"
+                 data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s; animation-name: fadeIn;">
+                <div class="text-extra-dark-gray text-uppercase text-medium font-weight-600 alt-font letter-spacing-1px margin-10px-bottom">
+                    Food details
+                </div>
+                <p class="w-75 lg-w-100 md-w-60 sm-w-75 sm-margin-10px-bottom mx-auto">Your local Food of quality and health</p>
+            </div>
+            <!-- end feature box item -->
         </div>
     </div>
-    <!-- end container -->
+</section>
+
+<section class="overflow-visible position-relative py-0 wow animate__zoomIn"
+         style="visibility: visible; animation-name: zoomIn;">
+    <a href="#"><img class="absolute-middle-center md-w-150px sm-w-100px"
+                     src="{% static 'website/home-restaurant-img-07.png' %}" alt="" data-no-retina=""></a>
+</section>
+
+<footer class="footer-restaurant footer-light padding-60px-tb border-top border-color-black-transparent md-padding-80px-top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6 sm-margin-15px-bottom">
+                <ul class="alt-font footer-horizontal-link d-flex flex-column flex-sm-row justify-content-center justify-content-md-start text-center text-uppercase text-small">
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Menu</a></li>
+                    <li><a href="#">Gallery</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-6 text-center text-md-end last-paragraph-no-margin">
+                <p class="alt-font text-small text-uppercase">© 2022 KIU-Cafe |
+                    Developed by <a
+                            href="https://exarth.com/" target="_blank"
+                            class="text-decoration-line-bottom text-extra-dark-gray text-uppercase font-weight-600">Exarth</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </footer>
-<!-- Footer end -->

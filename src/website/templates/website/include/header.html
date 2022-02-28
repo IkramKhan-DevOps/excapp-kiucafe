@@ -1,45 +1,38 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navigation fixed-top sticky">
-
-    <div class="container">
-        <a class="navbar-logo" href="/">
-            {# WHITE #}
-            <img src="{% static 'core/images/logo_100.png' %}" alt="" height="19" class="logo logo-dark">
-            {# COLORED #}
-            <img src="{% static 'core/images/logo_100.png' %}" alt="" height="19" class="logo logo-light">
-        </a>
-
-        <button type="button" class="btn btn-sm px-3 font-size-16 d-lg-none header-item waves-effect waves-light"
-                data-toggle="collapse" data-target="#topnav-menu-content">
-            <i class="fa fa-fw fa-bars"></i>
-        </button>
-
-        <div class="collapse navbar-collapse" id="topnav-menu-content">
-            <ul class="navbar-nav ml-auto" id="topnav-menu">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/#home">Home</a>
-                </li>
-
-
-            </ul>
-
-
-            {% if request.user.is_authenticated %}
-                <div class="ml-lg-2">
-                    <a class="btn btn-sm btn-success" href="{% url 'accounts:cross-auth-view' %}">
-                        <i class="mdi mdi-view-dashboard"></i> Dashboard
-                    </a>
+<header class="sticky">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent header-light fixed-top navbar-boxed header-reverse-scroll mobile-top-space">
+        <div class="container-fluid nav-header-container">
+            <div class="col-auto col-sm-6 col-lg-2 me-auto ps-lg-0">
+                <a class="navbar-brand" href="/">
+                    <img src="{% static 'core/images/logo_100.png' %}" data-at2x="{% static 'core/images/logo_100.png' %}"
+                         class="default-logo" alt="" width="0" height="0">
+                    <img src="{% static 'core/images/logo_100.png' %}" data-at2x="{% static 'core/images/logo_100.png' %}"
+                         class="alt-logo" alt="" width="0" height="0">
+                    <img src="{% static 'core/images/logo_100.png' %}" data-at2x="{% static 'core/images/logo_100.png' %}"
+                         class="mobile-logo" alt="" width="111" height="36">
+                </a>
+            </div>
+            <div class="col-auto col-lg-8 menu-order px-lg-0">
+                <button class="navbar-toggler float-end" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav alt-font">
+                        <li class="nav-item dropdown simple-dropdown">
+                            <a href="#" class="nav-link text-uppercase"></a>
+                        </li>
+                    </ul>
                 </div>
-            {% else %}
-                <div class="ml-lg-2">
-                    <a class="btn btn-sm btn-success" href="{% url 'account_login' %}">
-                        <i class="mdi mdi-account-lock"></i> Login
-                    </a>
+            </div>
+            <div class="col-auto col-lg-2 text-end pe-0 font-size-0">
+                <div class="header-button d-none d-md-inline-block">
+                    <a href="{% url 'account_login' %}" class="btn btn-very-small btn-golden btn-round-edge-small section-link">Login</a>
                 </div>
-            {% endif %}
-
-
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</header>
