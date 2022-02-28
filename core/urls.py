@@ -1,7 +1,13 @@
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
+from src.website.views import handler404View
 from . import settings
+
+
+handler404 = handler404View
+
 
 urlpatterns = [
     # REQUIRED --------------------------------------------------------- #
