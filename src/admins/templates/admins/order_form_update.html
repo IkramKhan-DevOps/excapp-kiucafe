@@ -119,9 +119,9 @@
 
                     <div class="form-group">
                         <button class="btn btn-success" id="process_order"><i class="fa fa-check"></i> Proceed</button>
-                        <button class="btn btn-warning" id="cancel_order"><i class="fa fa-times-circle"></i> Cancel
-                        </button>
-                        <button class="btn btn-danger" id="delete_order"><i class="fa fa-trash"></i> Delete</button>
+                        <button class="btn btn-danger" id="delete_order"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-light" id="cancel_order"><i class="fa fa-brush"></i></button>
+                        <a href="{% url 'admins_order_invoice' object.pk %}" class="btn btn-light" id="print_order"><i class="fa fa-print"></i></a>
                     </div>
                 </div>
             </div>
