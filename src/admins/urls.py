@@ -18,6 +18,7 @@ urlpatterns += (
     path('admins/order/create/', views.OrderCreateView.as_view(), name='admins_order_create'),
     path('admins/order/detail/<int:pk>/', views.OrderDetailView.as_view(), name='admins_order_detail'),
     path('admins/order/update/<int:pk>/', views.OrderUpdateView.as_view(), name='admins_order_update'),
+    path('admins/order/invoice/<int:pk>/', views.InvoiceView.as_view(), name='admins_order_invoice'),
 )
 
 urlpatterns += (

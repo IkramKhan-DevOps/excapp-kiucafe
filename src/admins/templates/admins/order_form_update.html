@@ -43,12 +43,14 @@
                         <table class="table table-bordered" id="cart-rows">
                             {% for cart in carts %}
                                 <tr data-id="{{ cart.product.pk }}" data-price="{{ cart.product.price_out }}">
-                                    <th>{{ cart }}</th>
-                                    <th>
-                                        <input class="form-control" data-id="{{ cart.product.pk }}" type="number"
-                                               value="{{ cart.quantity }}"
-                                               id="quantity"></th>
-                                    <th id="price">{{ cart.product.price_out }}</th>
+                                    <td>{{ cart.product.name }}</td>
+                                    <td width="100"><input class="form-control" data-id="{{ cart.product.pk }}"
+                                                           type="number" value="{{ cart.quantity }}" id="quantity"></td>
+                                    <td id="price">Rs {{ cart.product.price_out }}</td>
+                                    <td>
+                                        <button id="btn-remove-itm" data-id="{{ cart.product.pk }}"
+                                                class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
+                                    </td>
                                 </tr>
                             {% endfor %}
 
@@ -56,6 +58,7 @@
                     </div>
                 </div>
             </div>
+
 
             {# CALC------------------------------------ #}
             <div class="card">
@@ -116,7 +119,8 @@
 
                     <div class="form-group">
                         <button class="btn btn-success" id="process_order"><i class="fa fa-check"></i> Proceed</button>
-                        <button class="btn btn-warning" id="cancel_order"><i class="fa fa-times-circle"></i> Delete</button>
+                        <button class="btn btn-warning" id="cancel_order"><i class="fa fa-times-circle"></i> Cancel
+                        </button>
                         <button class="btn btn-danger" id="delete_order"><i class="fa fa-trash"></i> Delete</button>
                     </div>
                 </div>
@@ -124,6 +128,11 @@
         </div>
     </div>
 
+{% endblock %}
+
+
+{% block base_internal_scripts %}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 
@@ -181,9 +190,10 @@
 
                 if (!is_product_exists_in_cart(product_id)) {
                     let data_html = `<tr data-id="${product_id}" data-price="${product_price}">
-                                    <th>${product_name}</th>
-                                    <th><input class="form-control" data-id="${product_id}" type="number" value="1" id="quanity"></th>
-                                    <th id="price">Rs ${product_price}</th>
+                                    <td>${product_name}</td>
+                                    <td width="100"><input class="form-control" data-id="${product_id}" type="number" value="1" id="quantity"></td>
+                                    <td id="price">Rs ${product_price}</td>
+                                    <td><button id="btn-remove-itm" data-id="${product_id}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
                                 </tr>
                     `;
                     cart_rows.append(data_html)
@@ -192,20 +202,16 @@
                 totalling();
             });
 
-            {# ON CHANGE IN CART #}
-            {# ----------------- #}
-            $('body #cart-rows #quantity').keyup(function () {
-                let _quantity = parseInt($(this).val());
-                if (_quantity < 1) {
-                    $(this).val('1');
-                    totalling();
-                }
-
-                // TODO: calculations
+            $('body #cart-rows').on('click', '#btn-remove-itm', function (event) {
+                $(this).parent().parent().remove();
                 totalling();
             });
 
-            $('#cart-rows').on('change', '#quantity', function () {
+            {# ON CHANGE IN CART #}
+            {# ----------------- #}
+
+
+            $('body #cart-rows').on('keyup', '#quantity', function () {
                 let _quantity = parseInt($(this).val());
                 if (_quantity < 1) {
                     $(this).val('1');
@@ -294,8 +300,16 @@
                     processData: false,
                 }).then(function (data, status) {
                     if (status === 'success') {
-                        alert('Order Changed');
-                        location.href = "/admins/order/update/"+data.id+"/";
+                        if (status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Order Updated Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then((result) => {
+                                location.href = "/admins/order/update/" + data.id + "/";
+                            });
+                        }
                     }
                 }).catch(function (err) {
                     console.log(err);
@@ -339,8 +353,15 @@
 
             function deleteOrderAPI() {
                 $.get('/api/order/{{ object.pk }}/delete/', function (data, status) {
-                    if(status==='success'){
-                        window.location = "{% url 'admins_order_list' %}";
+                    if (status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Order Removed Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then((result) => {
+                            window.location = "{% url 'admins_order_list' %}";
+                        });
                     }
                 })
             }

@@ -113,10 +113,16 @@
 
 {% endblock %}
 
+{% block base_internal_scripts %}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
+
 
 {% block base_external_scripts %}
     <script>
         $(document).ready(function () {
+
+
 
             {# SECURITY MIDDLEWARES --------------------------------------------------------------------------------- #}
             const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -167,9 +173,10 @@
 
                 if (!is_product_exists_in_cart(product_id)) {
                     let data_html = `<tr data-id="${product_id}" data-price="${product_price}">
-                                    <th>${product_name}</th>
-                                    <th><input class="form-control" data-id="${product_id}" type="number" value="1" id="quanity"></th>
-                                    <th id="price">Rs ${product_price}</th>
+                                    <td>${product_name}</td>
+                                    <td width="100"><input class="form-control" data-id="${product_id}" type="number" value="1" id="quantity"></td>
+                                    <td id="price">Rs ${product_price}</td>
+                                    <td><button id="btn-remove-itm" data-id="${product_id}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
                                 </tr>
                     `;
                     cart_rows.append(data_html)
@@ -180,7 +187,7 @@
 
             {# ON CHANGE IN CART #}
             {# ----------------- #}
-            $('#cart-rows').on('keyup', '#quanity', function () {
+            $('#cart-rows').on('keyup', '#quantity', function () {
                 let _quantity = parseInt($(this).val());
                 if (_quantity < 1) {
                     $(this).val('1');
@@ -188,6 +195,11 @@
                 }
 
                 // TODO: calculations
+                totalling();
+            });
+
+            $('body #cart-rows').on('click', '#btn-remove-itm', function (event) {
+                $(this).parent().parent().remove();
                 totalling();
             });
 
@@ -266,8 +278,16 @@
                     processData: false,
                 }).then(function (data, status) {
                     if (status === 'success') {
-                        alert('Order Placed Successfull');
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Order Placed Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then((result) => {
+                            window.open("/admins/order/invoice/"+data.id+"/",
+                                "", "width=500, height=500");
+                            location.reload();
+                        });
                     }
                 }).catch(function (err) {
                     console.log(err);

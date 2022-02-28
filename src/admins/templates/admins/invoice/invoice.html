@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block base_title %} invoice #{{ object.pk }} {% endblock %}
+
+{% block base_top_nav %}
+
+{% endblock %}
+
+{% block dont_include_details %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="invoice-title">
+                        <div class="mb-2">
+                            <img src="{% static 'core/images/logo_100.png' %}" alt="logo" height="40">
+                            <b class="font-weight-bolder font-size-20"> KIU Cafe</b>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <address>
+                                <strong class="h5">
+                                    <b>Bill Details</b>
+                                </strong><br>
+                                <div class="mt-2">
+                                    <i class="fa fa-user"></i>
+                                    {{ object.customer_name }}
+                                    <br>
+                                    <h4 class="float-right font-size-16 mb-0">Order # {{ object.pk }}</h4>
+                                </div>
+                            </address>
+                        </div>
+                    </div>
+                    <div class="py-2 mt-3">
+                        <h3 class="font-size-15 font-weight-bold">Order summary</h3>
+                    </div>
+                    <div class="">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th class="text-right">Qty</th>
+                                <th class="text-right">Rs</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for c in cart %}
+                                <tr>
+                                <td class="text-wrap">{{ c.product.name }}
+                                </td>
+                                <td class="text-right">{{ c.quantity }}</td>
+                                <td class="text-right">{{ c.product.price_out }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td colspan="2" class="border-0 text-right">
+                                    <strong>Total</strong></td>
+                                <td class="border-0 text-right"><h5 class="m-0">Rs {{ object.total }}</h5></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="border-0 text-right">
+                                    <strong>Paid</strong></td>
+                                <td class="border-0 text-right"><h5 class="m-0">Rs {{ object.paid }}</h5></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-print-none">
+                        <div class="float-right">
+                            <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light mr-1"><i
+                                    class="fa fa-print"></i> Print Invoice</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block base_external_scripts %}
+
+{% endblock %}

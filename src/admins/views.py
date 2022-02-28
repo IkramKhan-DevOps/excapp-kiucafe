@@ -8,12 +8,14 @@ from django.core import serializers
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView, DeleteView
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, filters
 from json_views.views import JSONListView
 from rest_framework import generics, status
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -123,6 +125,7 @@ class OrderListView(ListView):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class OrderCreateView(CreateView):
     model = Order
     form_class = OrderForm
@@ -132,6 +135,7 @@ class OrderDetailView(DetailView):
     model = Order
 
 
+@method_decorator(never_cache, name='dispatch')
 class OrderUpdateView(UpdateView):
     model = Order
     form_class = OrderForm
@@ -160,6 +164,19 @@ class CartDetailView(DetailView):
 class CartUpdateView(UpdateView):
     model = Cart
     form_class = CartForm
+
+
+class InvoiceView(DetailView):
+    model = Order
+    template_name = 'admins/invoice/invoice.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Order.objects.all(), pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(InvoiceView, self).get_context_data(**kwargs)
+        context['cart'] = Cart.objects.filter(order=self.object)
+        return context
 
 
 """ API HERE -------------------------------------------------------------------------- """
@@ -217,7 +234,7 @@ class ProcessOrderAPI(APIView):
                 quantity=product['quantity']
             ).save()
 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED, data={'id':order.pk})
 
 
 class DeleteOrderAPI(APIView):
